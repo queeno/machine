@@ -268,7 +268,7 @@ func TestCIDRHostIFaceCollisionExisting(t *testing.T) {
 		stdOut: stdOutTwoHostOnlyNetwork,
 	}
 	mhi := newMockHostInterfaces()
-	_, err := mhi.addMockIface("192.168.99.42", 24, net.IPv4len, "en0", net.FlagUp|net.FlagBroadcast)
+	_, err := mhi.addMockIface("192.168.56.42", 24, net.IPv4len, "en0", net.FlagUp|net.FlagBroadcast)
 	assert.NoError(t, err)
 
 	nets, err := listHostOnlyAdapters(vbox)
@@ -277,7 +277,7 @@ func TestCIDRHostIFaceCollisionExisting(t *testing.T) {
 	assert.Nil(t, listErr)
 	assert.NotEmpty(t, m)
 
-	_, network, cidrErr := net.ParseCIDR("192.168.99.1/24")
+	_, network, cidrErr := net.ParseCIDR("192.168.56.1/24")
 	assert.Nil(t, cidrErr)
 	err = validateNoIPCollisions(mhi, network, nets)
 	assert.Equal(t, ErrNetworkAddrCollision, err)
@@ -299,7 +299,7 @@ func TestCIDRHostIFaceNoCollision(t *testing.T) {
 	assert.Nil(t, listErr)
 	assert.NotEmpty(t, m)
 
-	_, network, cidrErr := net.ParseCIDR("192.168.99.1/24")
+	_, network, cidrErr := net.ParseCIDR("192.168.56.1/24")
 	assert.Nil(t, cidrErr)
 	err = validateNoIPCollisions(mhi, network, nets)
 	assert.NoError(t, err)
@@ -312,7 +312,7 @@ func TestCIDRHostIFaceCollision(t *testing.T) {
 		stdOut: "",
 	}
 	mhi := newMockHostInterfaces()
-	_, err := mhi.addMockIface("192.168.99.42", 24, net.IPv4len, "en0", net.FlagUp|net.FlagBroadcast)
+	_, err := mhi.addMockIface("192.168.56.42", 24, net.IPv4len, "en0", net.FlagUp|net.FlagBroadcast)
 	assert.NoError(t, err)
 
 	nets, err := listHostOnlyAdapters(vbox)
@@ -321,7 +321,7 @@ func TestCIDRHostIFaceCollision(t *testing.T) {
 	assert.Nil(t, listErr)
 	assert.NotEmpty(t, m)
 
-	_, network, cidrErr := net.ParseCIDR("192.168.99.1/24")
+	_, network, cidrErr := net.ParseCIDR("192.168.56.1/24")
 	assert.Nil(t, cidrErr)
 	err = validateNoIPCollisions(mhi, network, nets)
 	assert.Equal(t, ErrNetworkAddrCollision, err)
@@ -343,9 +343,9 @@ func TestGetDHCPAddressRange(t *testing.T) {
 		},
 		{
 			"Test /24 CIDR",
-			"192.168.99.7/24",
-			net.ParseIP("192.168.99.100"),
-			net.ParseIP("192.168.99.254"),
+			"192.168.56.7/24",
+			net.ParseIP("192.168.56.100"),
+			net.ParseIP("192.168.56.254"),
 		},
 		{
 			"Test /25 CIDR",
@@ -585,7 +585,7 @@ func TestStart(t *testing.T) {
 Name:            VirtualBox Host-Only Ethernet Adapter
 GUID:            786f6276-656e-4074-8000-0a0027000000
 DHCP:            Disabled
-IPAddress:       192.168.99.1
+IPAddress:       192.168.56.1
 NetworkMask:     255.255.255.0
 IPV6Address:
 IPV6NetworkMaskPrefixLength: 0
@@ -593,10 +593,10 @@ HardwareAddress: 0a:00:27:00:00:00
 MediumType:      Ethernet
 Status:          Up
 VBoxNetworkName: HostInterfaceNetworking-VirtualBox Host-Only Ethernet Adapter`, nil},
-		{"vbm hostonlyif ipconfig VirtualBox Host-Only Ethernet Adapter --ip 192.168.99.1 --netmask 255.255.255.0", "", nil},
+		{"vbm hostonlyif ipconfig VirtualBox Host-Only Ethernet Adapter --ip 192.168.56.1 --netmask 255.255.255.0", "", nil},
 		{"vbm list dhcpservers", "", nil},
 		{"vbm list dhcpservers", "", nil},
-		{"vbm dhcpserver add --netname HostInterfaceNetworking-VirtualBox Host-Only Ethernet Adapter --ip 192.168.99.6 --netmask 255.255.255.0 --lowerip 192.168.99.100 --upperip 192.168.99.254 --enable", "", nil},
+		{"vbm dhcpserver add --netname HostInterfaceNetworking-VirtualBox Host-Only Ethernet Adapter --ip 192.168.56.6 --netmask 255.255.255.0 --lowerip 192.168.56.100 --upperip 192.168.56.254 --enable", "", nil},
 		{"vbm modifyvm default --nic2 hostonly --nictype2 82540EM --nicpromisc2 deny --hostonlyadapter2 VirtualBox Host-Only Ethernet Adapter --cableconnected2 on", "", nil},
 		{"IGNORE CALL", "", nil},
 		{"IGNORE CALL", "", nil},
@@ -607,7 +607,7 @@ VBoxNetworkName: HostInterfaceNetworking-VirtualBox Host-Only Ethernet Adapter`,
 Name:            VirtualBox Host-Only Ethernet Adapter
 GUID:            786f6276-656e-4074-8000-0a0027000000
 DHCP:            Disabled
-IPAddress:       192.168.99.1
+IPAddress:       192.168.56.1
 NetworkMask:     255.255.255.0
 IPV6Address:
 IPV6NetworkMaskPrefixLength: 0
@@ -635,7 +635,7 @@ func TestStartWithHostOnlyAdapterCreationBug(t *testing.T) {
 Name:            VirtualBox Host-Only Ethernet Adapter
 GUID:            786f6276-656e-4074-8000-0a0027000000
 DHCP:            Disabled
-IPAddress:       192.168.99.1
+IPAddress:       192.168.56.1
 NetworkMask:     255.255.255.0
 IPV6Address:
 IPV6NetworkMaskPrefixLength: 0
@@ -643,10 +643,10 @@ HardwareAddress: 0a:00:27:00:00:00
 MediumType:      Ethernet
 Status:          Up
 VBoxNetworkName: HostInterfaceNetworking-VirtualBox Host-Only Ethernet Adapter`, nil},
-		{"vbm hostonlyif ipconfig VirtualBox Host-Only Ethernet Adapter --ip 192.168.99.1 --netmask 255.255.255.0", "", nil},
+		{"vbm hostonlyif ipconfig VirtualBox Host-Only Ethernet Adapter --ip 192.168.56.1 --netmask 255.255.255.0", "", nil},
 		{"vbm list dhcpservers", "", nil},
 		{"vbm list dhcpservers", "", nil},
-		{"vbm dhcpserver add --netname HostInterfaceNetworking-VirtualBox Host-Only Ethernet Adapter --ip 192.168.99.6 --netmask 255.255.255.0 --lowerip 192.168.99.100 --upperip 192.168.99.254 --enable", "", nil},
+		{"vbm dhcpserver add --netname HostInterfaceNetworking-VirtualBox Host-Only Ethernet Adapter --ip 192.168.56.6 --netmask 255.255.255.0 --lowerip 192.168.56.100 --upperip 192.168.56.254 --enable", "", nil},
 		{"vbm modifyvm default --nic2 hostonly --nictype2 82540EM --nicpromisc2 deny --hostonlyadapter2 VirtualBox Host-Only Ethernet Adapter --cableconnected2 on", "", nil},
 		{"IGNORE CALL", "", nil},
 		{"IGNORE CALL", "", nil},
@@ -657,7 +657,7 @@ VBoxNetworkName: HostInterfaceNetworking-VirtualBox Host-Only Ethernet Adapter`,
 Name:            VirtualBox Host-Only Ethernet Adapter
 GUID:            786f6276-656e-4074-8000-0a0027000000
 DHCP:            Disabled
-IPAddress:       192.168.99.100
+IPAddress:       192.168.56.100
 NetworkMask:     255.255.255.0
 IPV6Address:
 IPV6NetworkMaskPrefixLength: 0
@@ -670,7 +670,7 @@ VBoxNetworkName: HostInterfaceNetworking-VirtualBox Host-Only Ethernet Adapter`,
 		{"vbm controlvm default acpipowerbutton", "", nil},
 		{"vbm showvminfo default --machinereadable", `VMState="stopped"`, nil},
 		{"Sleep 5s", "", nil},
-		{"vbm hostonlyif ipconfig VirtualBox Host-Only Ethernet Adapter --ip 192.168.99.1 --netmask 255.255.255.0", "", nil},
+		{"vbm hostonlyif ipconfig VirtualBox Host-Only Ethernet Adapter --ip 192.168.56.1 --netmask 255.255.255.0", "", nil},
 		{"Sleep 5s", "", nil},
 		{"vbm startvm default --type headless", "", nil},
 		{"WaitIP", "", nil},

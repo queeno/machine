@@ -25,7 +25,7 @@ const (
 	defaultMemory              = 1024
 	defaultBoot2DockerURL      = ""
 	defaultBoot2DockerImportVM = ""
-	defaultHostOnlyCIDR        = "192.168.99.1/24"
+	defaultHostOnlyCIDR        = "192.168.56.1/24"
 	defaultHostOnlyNictype     = "82540EM"
 	defaultHostOnlyPromiscMode = "deny"
 	defaultUIType              = "headless"

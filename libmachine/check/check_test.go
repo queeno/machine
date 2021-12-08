@@ -46,9 +46,9 @@ func TestCheckCert(t *testing.T) {
 		checkErr    error
 		expectedErr error
 	}{
-		{"192.168.99.100:2376", &auth.Options{}, true, nil, nil},
-		{"192.168.99.100:2376", &auth.Options{}, false, nil, ErrCertInvalid{wrappedErr: nil, hostURL: "192.168.99.100:2376"}},
-		{"192.168.99.100:2376", &auth.Options{}, false, errCertsExpired, ErrCertInvalid{wrappedErr: errCertsExpired, hostURL: "192.168.99.100:2376"}},
+		{"192.168.56.100:2376", &auth.Options{}, true, nil, nil},
+		{"192.168.56.100:2376", &auth.Options{}, false, nil, ErrCertInvalid{wrappedErr: nil, hostURL: "192.168.56.100:2376"}},
+		{"192.168.56.100:2376", &auth.Options{}, false, errCertsExpired, ErrCertInvalid{wrappedErr: errCertsExpired, hostURL: "192.168.56.100:2376"}},
 	}
 
 	for _, c := range cases {

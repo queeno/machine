@@ -9,7 +9,7 @@ var (
 	v1conf = []byte(`{
     "ConfigVersion": 1,
     "Driver": {
-        "IPAddress": "192.168.99.100",
+        "IPAddress": "192.168.56.100",
         "SSHUser": "docker",
         "SSHPort": 64477,
         "MachineName": "foobar",
@@ -23,7 +23,7 @@ var (
         "DiskSize": 20000,
         "Boot2DockerURL": "",
         "Boot2DockerImportVM": "",
-        "HostOnlyCIDR": "192.168.99.1/24"
+        "HostOnlyCIDR": "192.168.56.1/24"
     },
     "DriverName": "virtualbox",
     "HostOptions": {

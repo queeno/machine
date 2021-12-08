@@ -29,7 +29,7 @@ To see how to connect Docker to this machine, run: docker-machine env default
 
 $ docker-machine ls
 NAME      ACTIVE   DRIVER       STATE     URL                         SWARM   DOCKER   ERRORS
-default   -        virtualbox   Running   tcp://192.168.99.188:2376           v1.9.1
+default   -        virtualbox   Running   tcp://192.168.56.188:2376           v1.9.1
 
 $ eval "$(docker-machine env default)"
 
@@ -52,7 +52,7 @@ To see how to connect Docker to this machine, run: docker-machine env staging
 
 $ docker-machine ls
 NAME      ACTIVE   DRIVER         STATE     URL                         SWARM   DOCKER   ERRORS
-default   -        virtualbox     Running   tcp://192.168.99.188:2376           v1.9.1
+default   -        virtualbox     Running   tcp://192.168.56.188:2376           v1.9.1
 staging   -        digitalocean   Running   tcp://203.0.113.81:2376             v1.9.1
 ```
 

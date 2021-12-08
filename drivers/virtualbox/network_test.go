@@ -13,7 +13,7 @@ const (
 Name:            vboxnet0
 GUID:            786f6276-656e-4074-8000-0a0027000000
 DHCP:            Disabled
-IPAddress:       192.168.99.1
+IPAddress:       192.168.56.1
 NetworkMask:     255.255.255.0
 IPV6Address:
 IPV6NetworkMaskPrefixLength: 0
@@ -27,7 +27,7 @@ VBoxNetworkName: HostInterfaceNetworking-vboxnet0
 Name:            vboxnet0
 GUID:            786f6276-656e-4074-8000-0a0027000000
 DHCP:            Disabled
-IPAddress:       192.168.99.1
+IPAddress:       192.168.56.1
 NetworkMask:     255.255.255.0
 IPV6Address:
 IPV6NetworkMaskPrefixLength: 0
@@ -50,17 +50,17 @@ VBoxNetworkName: HostInterfaceNetworking-vboxnet1
 `
 	stdOutListTwoDHCPServers = `
 NetworkName:    HostInterfaceNetworking-vboxnet0
-IP:             192.168.99.6
+IP:             192.168.56.6
 NetworkMask:    255.255.255.0
-lowerIPAddress: 192.168.99.100
-upperIPAddress: 192.168.99.254
+lowerIPAddress: 192.168.56.100
+upperIPAddress: 192.168.56.254
 Enabled:        Yes
 
 NetworkName:    HostInterfaceNetworking-vboxnet1
-IP:             192.168.99.7
+IP:             192.168.56.7
 NetworkMask:    255.255.255.0
-lowerIPAddress: 192.168.99.100
-upperIPAddress: 192.168.99.254
+lowerIPAddress: 192.168.56.100
+upperIPAddress: 192.168.56.254
 Enabled:        No
 `
 )
@@ -99,7 +99,7 @@ func (mhi *mockHostInterfaces) addMockIface(ip string, mask int, iplen int, name
 // Tests that when we have a host only network which matches our expectations,
 // it gets returned correctly.
 func TestGetHostOnlyNetworkHappy(t *testing.T) {
-	cidr := "192.168.99.0/24"
+	cidr := "192.168.56.0/24"
 	ip, ipnet, err := net.ParseCIDR(cidr)
 	if err != nil {
 		t.Fatalf("Error parsing cidr: %s", err)
@@ -121,7 +121,7 @@ func TestGetHostOnlyNetworkHappy(t *testing.T) {
 // matches our expectations can not be found.
 func TestGetHostOnlyNetworkNotFound(t *testing.T) {
 	// Note that this has a different ip is different from "ip" below.
-	cidr := "192.168.99.0/24"
+	cidr := "192.168.56.0/24"
 	ip, ipnet, err := net.ParseCIDR(cidr)
 	if err != nil {
 		t.Fatalf("Error parsing cidr: %s", err)
@@ -147,7 +147,7 @@ func TestGetHostOnlyNetworkNotFound(t *testing.T) {
 // Tests a special case where Virtualbox creates the host only network
 // successfully but mis-reports the netmask.
 func TestGetHostOnlyNetworkWindows10Bug(t *testing.T) {
-	cidr := "192.168.99.0/24"
+	cidr := "192.168.56.0/24"
 	ip, ipnet, err := net.ParseCIDR(cidr)
 	if err != nil {
 		t.Fatalf("Error parsing cidr: %s", err)
@@ -190,7 +190,7 @@ func TestListHostOnlyNetworks(t *testing.T) {
 	assert.Equal(t, "vboxnet0", net.Name)
 	assert.Equal(t, "786f6276-656e-4074-8000-0a0027000000", net.GUID)
 	assert.False(t, net.DHCP)
-	assert.Equal(t, "192.168.99.1", net.IPv4.IP.String())
+	assert.Equal(t, "192.168.56.1", net.IPv4.IP.String())
 	assert.Equal(t, "ffffff00", net.IPv4.Mask.String())
 	assert.Equal(t, "0a:00:27:00:00:00", net.HwAddr.String())
 	assert.Equal(t, "Ethernet", net.Medium)
@@ -254,7 +254,7 @@ func TestGetHostOnlyNetwork(t *testing.T) {
 	nets, err := listHostOnlyAdapters(vbox)
 	assert.NoError(t, err)
 
-	net, err := getOrCreateHostOnlyNetwork(net.ParseIP("192.168.99.1"), parseIPv4Mask("255.255.255.0"), nets, vbox)
+	net, err := getOrCreateHostOnlyNetwork(net.ParseIP("192.168.56.1"), parseIPv4Mask("255.255.255.0"), nets, vbox)
 
 	assert.NotNil(t, net)
 	assert.Equal(t, "HostInterfaceNetworking-vboxnet0", net.NetworkName)
@@ -265,17 +265,17 @@ func TestFailIfTwoNetworksHaveSameIP(t *testing.T) {
 	vbox := &VBoxManagerMock{
 		args: "list hostonlyifs",
 		stdOut: `Name:            vboxnet0
-IPAddress:       192.168.99.1
+IPAddress:       192.168.56.1
 NetworkMask:     255.255.255.0
 VBoxNetworkName: HostInterfaceNetworking-vboxnet0
 Name:            vboxnet1
-IPAddress:       192.168.99.1
+IPAddress:       192.168.56.1
 NetworkMask:     255.255.255.0
 VBoxNetworkName: HostInterfaceNetworking-vboxnet1`,
 	}
 	nets, err := listHostOnlyAdapters(vbox)
 	assert.Nil(t, nets)
-	assert.EqualError(t, err, `VirtualBox is configured with multiple host-only adapters with the same IP "192.168.99.1". Please remove one`)
+	assert.EqualError(t, err, `VirtualBox is configured with multiple host-only adapters with the same IP "192.168.56.1". Please remove one`)
 }
 
 func TestFailIfTwoNetworksHaveSameName(t *testing.T) {
@@ -305,18 +305,18 @@ func TestGetDHCPServers(t *testing.T) {
 	server, present := servers["HostInterfaceNetworking-vboxnet0"]
 	assert.True(t, present)
 	assert.Equal(t, "HostInterfaceNetworking-vboxnet0", server.NetworkName)
-	assert.Equal(t, "192.168.99.6", server.IPv4.IP.String())
-	assert.Equal(t, "192.168.99.100", server.LowerIP.String())
-	assert.Equal(t, "192.168.99.254", server.UpperIP.String())
+	assert.Equal(t, "192.168.56.6", server.IPv4.IP.String())
+	assert.Equal(t, "192.168.56.100", server.LowerIP.String())
+	assert.Equal(t, "192.168.56.254", server.UpperIP.String())
 	assert.Equal(t, "ffffff00", server.IPv4.Mask.String())
 	assert.True(t, server.Enabled)
 
 	server, present = servers["HostInterfaceNetworking-vboxnet1"]
 	assert.True(t, present)
 	assert.Equal(t, "HostInterfaceNetworking-vboxnet1", server.NetworkName)
-	assert.Equal(t, "192.168.99.7", server.IPv4.IP.String())
-	assert.Equal(t, "192.168.99.100", server.LowerIP.String())
-	assert.Equal(t, "192.168.99.254", server.UpperIP.String())
+	assert.Equal(t, "192.168.56.7", server.IPv4.IP.String())
+	assert.Equal(t, "192.168.56.100", server.LowerIP.String())
+	assert.Equal(t, "192.168.56.254", server.UpperIP.String())
 	assert.Equal(t, "ffffff00", server.IPv4.Mask.String())
 	assert.False(t, server.Enabled)
 }
@@ -347,7 +347,7 @@ func TestCheckIPNetCollisionIPv6(t *testing.T) {
 // Tests detection of a conflict between prospective vbox host-only network and an IPV4 host interface
 func TestCheckIPNetCollisionIPv4(t *testing.T) {
 	m := map[string]*net.IPNet{}
-	_, vboxHostOnly, err := net.ParseCIDR("192.168.99.1/24")
+	_, vboxHostOnly, err := net.ParseCIDR("192.168.56.1/24")
 	assert.NoError(t, err)
 
 	hostIP, hostNet, err := net.ParseCIDR("10.10.10.42/24")
@@ -358,7 +358,7 @@ func TestCheckIPNetCollisionIPv4(t *testing.T) {
 	assert.NoError(t, err)
 	assert.False(t, result)
 
-	hostIP, hostNet, err = net.ParseCIDR("192.168.99.22/24")
+	hostIP, hostNet, err = net.ParseCIDR("192.168.56.22/24")
 	assert.NoError(t, err)
 	m[hostIP.String()] = &net.IPNet{IP: hostIP, Mask: hostNet.Mask}
 
@@ -380,12 +380,12 @@ func TestListHostInterfaces(t *testing.T) {
 	assert.NoError(t, err)
 	en0ipv6, err := mhi.addMockIface("2001:4998:c:a06::2:4008", 64, net.IPv6len, "en0ipv6", net.FlagUp|net.FlagBroadcast)
 	assert.NoError(t, err)
-	vboxnet0, err := mhi.addMockIface("192.168.99.1", 24, net.IPv4len, "vboxnet0", net.FlagUp|net.FlagBroadcast)
+	vboxnet0, err := mhi.addMockIface("192.168.56.1", 24, net.IPv4len, "vboxnet0", net.FlagUp|net.FlagBroadcast)
 	assert.NoError(t, err)
-	notvboxnet0, err := mhi.addMockIface("192.168.99.42", 24, net.IPv4len, "en2", net.FlagUp|net.FlagBroadcast)
+	notvboxnet0, err := mhi.addMockIface("192.168.56.42", 24, net.IPv4len, "en2", net.FlagUp|net.FlagBroadcast)
 	assert.NoError(t, err)
 
-	excludes["192.168.99.1/24"] = &hostOnlyNetwork{IPv4: *vboxnet0, Name: "HostInterfaceNetworking-vboxnet0"}
+	excludes["192.168.56.1/24"] = &hostOnlyNetwork{IPv4: *vboxnet0, Name: "HostInterfaceNetworking-vboxnet0"}
 
 	m, err := listHostInterfaces(mhi, excludes)
 	assert.NoError(t, err)
@@ -397,10 +397,10 @@ func TestListHostInterfaces(t *testing.T) {
 	assert.Contains(t, m, "2001:4998:c:a06::2:4008/64")
 	assert.Equal(t, en0ipv6, m["2001:4998:c:a06::2:4008/64"])
 
-	assert.Contains(t, m, "192.168.99.42/24")
-	assert.Equal(t, notvboxnet0, m["192.168.99.42/24"])
+	assert.Contains(t, m, "192.168.56.42/24")
+	assert.Equal(t, notvboxnet0, m["192.168.56.42/24"])
 
 	assert.NotContains(t, m, "10.10.1.11/24")
 	assert.NotContains(t, m, "127.0.0.1/24")
-	assert.NotContains(t, m, "192.168.99.1/24")
+	assert.NotContains(t, m, "192.168.56.1/24")
 }
